@@ -134,8 +134,8 @@ async def dpsCheck(ctx, arg, mode):
 
 
 @bot.command(name='short')
-async def short(ctx, mode=None, short="", ship=""):
-    if mode == None:
+async def func(ctx, mode="set", short="", ship=""):
+    if mode == "":
         await ctx.send("Please specify operation. Command is :short <set/remove/print/help>. Use :short help for help on command")
 
     #set subcommand
@@ -191,7 +191,7 @@ async def short(ctx, mode=None, short="", ship=""):
         await ctx.send("Operation not found, please run :short help for help on the command.")
 
 @bot.command(name="hitlist")
-async def hitlist(ctx, mode = "", player = "", reason = ""):
+async def hitlist(ctx, mode = "add", player = "", reason = ""):
     if mode != "":
         if mode == "add":
             try:
@@ -311,4 +311,17 @@ async def services(ctx, service, status = True):
 
     else:
         await ctx.send(f"Nothing changed, {service} does not exist")
+
+"""
+@bot.command(name="data")
+async def data(ctx, ship = "", mode = "", cat = "", string = ""):
+    #check if all args aren't empty
+    #if so, then add the request into a new entry in json
+    #during bot startup, create a subprocess that checks the json file every now and then
+    #if amount of people reacting positively is over 50%, then push change to excel file.
+    #to do this, open the excel file in the subprocess, write to it, then close it back.
+    #should change code to load the excel file when command is invoked, instead of startup.
+    if ship != "" and mode != "" and cat != "" and string != "":
+        xlsx =
+"""
 bot.run(TOKEN)
