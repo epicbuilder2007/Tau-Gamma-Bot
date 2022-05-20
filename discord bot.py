@@ -121,7 +121,7 @@ async def shipCommand(ctx, arg, mode):
 
 
 load_dotenv()
-TOKEN = "NzEzMDE2NzY3OTc0NDczNzU5.GqsqWA.Xx_HrUig6Lw2ahixwmF3jKOBJaDT2FPRwm5Yxk"
+TOKEN = ""
 bot = commands.Bot(command_prefix=":")
 
 """
