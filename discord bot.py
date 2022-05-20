@@ -82,8 +82,9 @@ load_dotenv()
 TOKEN = "NzEzMDE2NzY3OTc0NDczNzU5.XsZ-nA.TvQsvuJepWTcKRNO5KkzIXTal3Q"
 bot = commands.Bot(command_prefix=":")
 
+#replace this with :range, :info, and :turret
 @bot.command(name='ship')
-async def dpsCheck(ctx, arg, mode):
+async def dpsCheck(ctx, arg, mode="info"):
     global JSON
     try:
         JSON = open(f'{ctx.author.id}.json', "r+")
@@ -134,7 +135,55 @@ async def dpsCheck(ctx, arg, mode):
 
 
 @bot.command(name='short')
-async def func(ctx, mode="set", short="", ship=""):
+async def func(ctx, short="", *, arg):
+    args = arg.split()
+    mode = "set"
+    if "set" in args or "remove" in args or "print" in args:
+        if "set" in args:
+            mode = "set"
+        elif "remove" in args:
+            mode = "remove"
+        elif "print" in args:
+            mode = "remove"
+    args[args.index(mode)].remove()
+    global JSON
+    try:
+        JSON = open(f'{ctx.author.id}.json', "r")
+    except FileNotFoundError:
+        await newJSON(ctx)
+        JSON = open(f'{ctx.author.id}.json', 'r')
+    pref = json.load(JSON)
+    JSON.close()
+    if mode == "set":
+        JSON = open(f'{ctx.author.id}.json', 'w')
+        pref['set_auto_referral'][str(short)] = str(args[0])
+        pref = json.dumps(pref, indent=4)
+        JSON.write(pref)
+        JSON.close()
+    elif mode == "remove":
+        try:
+            JSON = open(f'{ctx.author.id}.json', 'w')
+            try:
+                del pref['set_auto_referral'][str(short)]
+                pref = json.dumps(pref, indent=4)
+                JSON.write(pref)
+                JSON.close()
+            except KeyError:
+                await ctx.send(f"Short {short} is not found, did you make a typo?")
+        except FileNotFoundError:
+            await ctx.send("You don't have a json file, please use the bot before using this.")
+    elif mode == "print":
+        try:
+            await ctx.send(f'{short} was set to ship {pref["set_auto_referral"][str(short)]}.')
+        except KeyError:
+            await ctx.send(f'Short {short} not found, did you make a typo?')
+
+
+
+
+
+
+    """
     if mode == "":
         await ctx.send("Please specify operation. Command is :short <set/remove/print/help>. Use :short help for help on command")
 
@@ -189,9 +238,51 @@ async def func(ctx, mode="set", short="", ship=""):
 
     else:
         await ctx.send("Operation not found, please run :short help for help on the command.")
-
+    """
 @bot.command(name="hitlist")
-async def hitlist(ctx, mode = "add", player = "", reason = ""):
+async def hitlist(ctx, player = "", *, arg):
+    args = arg.split()
+    mode = "add"
+    if "add" in args or "view" in args or "viewall" in args:
+        if "add" in args:
+            mode = "add"
+        elif "view" in args:
+            mode = "view"
+        elif "viewall" in args:
+            mode = "viewall"
+        args[args.index(mode)].remove()
+    JSON = open('hitlist.json', 'r')
+    pref = json.load(JSON)
+    JSON.close()
+    if mode == "add":
+        JSON = open('hitlist.json', 'w')
+        if player != "":
+            pref[player] = " ".join(args)
+            pref = json.dumps(pref, indent = 4)
+            JSON.write(pref)
+            JSON.close()
+            await ctx.send(f"Player {player} added to hitlist for reason {' '.join(args)}")
+        else:
+            await ctx.send("Player not defined.")
+    elif mode == "view":
+        if player != "":
+            try:
+                await ctx.send(f'{player} is in the hitlist for {pref[player]}')
+            except KeyError:
+                await ctx.send(f'{player} not found. Probably typos.')
+            else:
+                await ctx.send("Player not defined.")
+    elif mode == "viewall":
+        string = ""
+        for key, value in pref.items():
+            string += f'{str(key)} is in the hitlist for {str(value)}'
+        if string != "":
+            await ctx.send(string)
+        else:
+            await ctx.send("hitlist is empty.")
+
+
+    """
     if mode != "":
         if mode == "add":
             try:
@@ -223,16 +314,16 @@ async def hitlist(ctx, mode = "add", player = "", reason = ""):
 
             except Exception as e:
                 await ctx.send(str(e))
-
+    """
 @bot.command(name="range")
 async def Range(ctx, arg):
     global JSON
     try:
-        JSON = open(f'{ctx.author.id}.json', "r+")
+        JSON = open(f'{ctx.author.id}.json', "r")
         pref = json.load(JSON)
     except:
         await newJSON(ctx)
-        JSON = open(f'{ctx.author.id}.json', "r+")
+        JSON = open(f'{ctx.author.id}.json', "r")
         pref = json.load(JSON)
 
     if arg in pref['set_auto_referral']:
