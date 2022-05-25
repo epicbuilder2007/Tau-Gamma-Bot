@@ -127,6 +127,16 @@ TOKEN = ""
 bot = commands.Bot(command_prefix="!")
 
 
+#Before we start the bot, we need to start an extra thread for checking reactions from !data.
+def checkReaction(ctx):
+    while True:
+        JSON = open("data.json", "r")
+        messages = json.load(JSON)
+        JSON.close()
+        JSON = open("data.json", "w")
+        for key, value in messages.items():
+            channelID = value[0]
+
 @bot.command(name='short')
 async def func(ctx, short="", *, arg):
     args = arg.split()
@@ -173,7 +183,7 @@ async def func(ctx, short="", *, arg):
 
 
 @bot.command(name="hitlist")
-async def hitlist(ctx, player = "", *, arg):
+async def hitlist(ctx, *, arg):
     args = arg.split()
     mode = "add"
     if "add" in args or "view" in args or "viewall" in args:
@@ -187,6 +197,7 @@ async def hitlist(ctx, player = "", *, arg):
     JSON = open('hitlist.json', 'r')
     pref = json.load(JSON)
     JSON.close()
+    player = args[0]
     if mode == "add":
         JSON = open('hitlist.json', 'w')
         if player != "":
@@ -297,7 +308,7 @@ async def data(ctx, ship = "", cat = "", string = ""):
         await message.add_reaction("⬆️")
         await message.add_reaction("⬇️")
         JSON = open("data.json", "w")
-        queue[str(message.id)] = (ship, cat, string)
+        queue[str(message.id)] = (message.channel.id , ship, cat, string)
         queue = json.dumps(queue, indent=4)
         JSON.write(queue)
         JSON.close()
