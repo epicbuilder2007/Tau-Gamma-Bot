@@ -184,7 +184,7 @@ async def func(ctx, short="", *, arg):
 
 @bot.command(name="hitlist")
 async def hitlist(ctx, *, arg):
-    args = arg.split()
+    args = arg.split(" ")
     mode = "add"
     if "add" in args or "view" in args or "viewall" in args:
         if "add" in args:
