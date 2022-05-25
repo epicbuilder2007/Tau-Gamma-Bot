@@ -123,7 +123,7 @@ async def shipCommand(ctx, arg, mode):
 
 
 load_dotenv()
-TOKEN = "NzEzMDE2NzY3OTc0NDczNzU5.G1PWG5.vDVGb6XmIPjvnKC-ZFCSmXX4M3UXyfCEa6QyeQ"
+TOKEN = ""
 bot = commands.Bot(command_prefix="!")
 
 
@@ -194,13 +194,13 @@ async def hitlist(ctx, *, arg):
             mode = "view"
         elif "viewall" in args:
             mode = "viewall"
-        args[args.index(mode)].remove()
+        args.remove(mode)
     JSON = open('hitlist.json', 'r')
     pref = json.load(JSON)
     JSON.close()
-    player = args[0]
     if mode == "add":
         JSON = open('hitlist.json', 'w')
+        player = str(arg[0])
         if player != "":
             pref[player] = " ".join(args)
             pref = json.dumps(pref, indent = 4)
