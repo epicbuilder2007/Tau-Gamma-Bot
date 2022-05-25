@@ -123,7 +123,7 @@ async def shipCommand(ctx, arg, mode):
 
 
 load_dotenv()
-TOKEN = ""
+TOKEN = "NzEzMDE2NzY3OTc0NDczNzU5.G1PWG5.vDVGb6XmIPjvnKC-ZFCSmXX4M3UXyfCEa6QyeQ"
 bot = commands.Bot(command_prefix="!")
 
 
@@ -148,7 +148,7 @@ async def func(ctx, short="", *, arg):
             mode = "remove"
         elif "print" in args:
             mode = "print"
-    args[args.index(mode)].remove()
+    args.remove(mode)
     global JSON
     try:
         JSON = open(f'{ctx.author.id}.json', "r")
