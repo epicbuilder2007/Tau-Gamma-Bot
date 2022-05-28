@@ -135,7 +135,12 @@ def checkReaction(ctx):
         JSON.close()
         JSON = open("data.json", "w")
         for key, value in messages.items():
-            channelID = value[0]
+            channel = bot.get_channel(int(value[0]))
+            msg = channel.fetch_messages(int(key))
+            posreaction = get(msg.reactions, emoji="⬆")
+            negreaction = get(msg.reactions, emoji="⬇")
+            if posreaction - negreaction >= 3:
+
 
 @bot.command(name='short')
 async def func(ctx, short="", *, arg):
@@ -187,13 +192,15 @@ async def hitlist(ctx, *, arg):
     args = arg.split(" ")
     print(args)
     mode = "add"
-    if "add" in args or "view" in args or "viewall" in args:
+    if "add" in args or "view" in args or "viewall" in args or "remove" in args:
         if "add" in args:
             mode = "add"
         elif "view" in args:
             mode = "view"
         elif "viewall" in args:
             mode = "viewall"
+        elif "remove" in args:
+            mode = "remove"
         args.remove(mode)
     JSON = open('hitlist.json', 'r')
     pref = json.load(JSON)
@@ -225,7 +232,14 @@ async def hitlist(ctx, *, arg):
             await ctx.send(string)
         else:
             await ctx.send("hitlist is empty.")
-
+    elif mode == "remove":
+        JSON = open('hitlist.json', 'w')
+        player = str(arg[0])
+        try:
+            del pref[player]
+            ctx.send(f"Successfully deleted player {player} from list")
+        except KeyError:
+            ctx.send(f'unable to find player {player} in list')
 
 @bot.command(name="range")
 async def Range(ctx, *, arg):
@@ -306,8 +320,8 @@ async def data(ctx, ship = "", cat = "", string = ""):
         queue = json.load(JSON)
         JSON.close()
         message = await ctx.send(f"Successfully proposed change: \n\n ship: {str(ship)} \n Data Category: {str(cat)} \n Value: {str(string)} \n\n Now the council shall decide your fate.")
-        await message.add_reaction("⬆️")
-        await message.add_reaction("⬇️")
+        await message.add_reaction("⬆")
+        await message.add_reaction("⬇")
         JSON = open("data.json", "w")
         queue[str(message.id)] = (message.channel.id , ship, cat, string)
         queue = json.dumps(queue, indent=4)
@@ -325,22 +339,50 @@ async def data(ctx, ship = "", cat = "", string = ""):
 
 
 @bot.command(name="suslist")
-async def sus(ctx, player = "", mode = "add"):
+async def sus(ctx, *, arg):
     JSON = open('suslist.json', 'r')
     pref = json.load(JSON)
     JSON.close()
-    if mode.lower() == "add":
-        pref[player] = "obligatory value here"
-        JSON = open('suslist.json', 'w')
-        pref = json.dumps(pref, indent=4)
-        JSON.write(pref)
-        JSON.close()
-    elif mode.lower() == "view":
+    args = arg.split()
+    mode = "add"
+    if "add" in args or "view" in args or "remove" in args
+        if "add" in args:
+            mode = "add"
+        elif "view" in args:
+            mode = "view"
+        elif "remove" in args:
+            mode = "remove"
+        args.remove(mode)
+    if mode != view:
+        try:
+            player = args[0]
+            if mode == "add":
+                pref[player] = "obligatory value here"
+                JSON = open('suslist.json', 'w')
+                pref = json.dumps(pref, indent=4)
+                JSON.write(pref)
+                JSON.close()
+            elif mode == "view":
+                string = []
+                for key, value in pref.items():
+                    string.append(str(key))
+                await ctx.send(f'Players in this list: {", ".join(string)}. Please be careful when around these players, as \
+                they are known for ruining the fun.')
+            elif mode == "remove":
+                try:
+                    del pref[player]
+                    ctx.send(f"Player {player} removed.")
+                except KeyError:
+                    ctx.send(f"Player {player} not found in list")
+        except KeyError:
+            ctx.send("Unable to find player argument")
+    elif mode == "view":
         string = []
         for key, value in pref.items():
             string.append(str(key))
         await ctx.send(f'Players in this list: {", ".join(string)}. Please be careful when around these players, as \
         they are known for ruining the fun.')
+
 
 
 bot.run(TOKEN)
