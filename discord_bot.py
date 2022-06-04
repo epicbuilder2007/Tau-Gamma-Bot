@@ -6,7 +6,6 @@ import pandas
 from pandas import *
 from discord.ext import commands
 import json
-import threading
 from numpy import ndarray
 
 Version = 1.8
@@ -46,16 +45,15 @@ async def outputResult(ctx, ship, mode):
     try:
         if mode == "info":
             string = \
-                "Ship: " + str(ship) + "\n" +\
-                "Ship Category: " + str(Galaxylist['Type'][str(ship)]) + "\n" +\
-                "Ship Status: " + str(Galaxylist['isLimited'][str(ship)]) + "\n" +\
-                "Average DPS: " + str(Galaxylist['AvDPS'][str(ship)]) + "\n" +\
-                "Shield DPS: " + str(Galaxylist['ShieldDPS'][str(ship)]) + "\n" +\
-                "Hull DPS: " + str(Galaxylist['HullDPS'][str(ship)]) + "\n" +\
-                "Turret DPS: " + str(Galaxylist['TurretDPS'][str(ship)]) + "\n" +\
-                "Spinal DPS: " + str(Galaxylist['SpinalDPS'][str(ship)]) + "\n" +\
-                "Minimum Range: " + str(Galaxylist['minRange'][str(ship)]) + "\n" +\
-                "Maximum Range: " + str(Galaxylist['maxRange'][str(ship)]) + "\n"
+                f"{str(ship)} is a {str(Galaxylist['isLimited'][str(ship)])} {str(Galaxylist['Type'][str(ship)])} \n\n" \
+                "__**SHIP DPS STATS:**__ \n" \
+                f"Average DPS:  {str(Galaxylist['AvDPS'][str(ship)])} \n" \
+                f"Shield DPS: {str(Galaxylist['ShieldDPS'][str(ship)])} \n" \
+                f"Hull DPS: {str(Galaxylist['HullDPS'][str(ship)])} \n" \
+                f"Turret DPS: {str(Galaxylist['TurretDPS'][str(ship)])} \n" \
+                f"Spinal DPS: {str(Galaxylist['SpinalDPS'][str(ship)])} \n" \
+                f"Minimum Range: {str(Galaxylist['minRange'][str(ship)])} \n" \
+                f"Maximum Range: {str(Galaxylist['maxRange'][str(ship)])} \n\n"
 
             global data
             try:
@@ -75,15 +73,24 @@ async def outputResult(ctx, ship, mode):
                     '<td class="pi-horizontal-group-item pi-data-value pi-font pi-border-color pi-item-spacing" data-source=',
                     '')
                 info[i] = info[i].replace('<p>', '')
-                info[i] = info[i].replace('</p>', '')
+                info[i] = info[i].replace('</p>', '\n')
                 info[i] = info[i].replace('</td>', '')
                 info[i] = info[i].replace('>', ': ')
                 info[i] = info[i].replace('"', '')
                 info[i] = info[i].replace('credit', 'manufacturing fee')
                 info[i] = info[i].replace('_', ' ')
                 info[i] = info[i].title()
-                info[i] += "\n"
-                string += info[i]
+
+            string += "__**SHIP STATS:**__ \n"
+            string += info[0]
+            string += info[1]
+            string += info[2]
+            string += info[3]
+
+            string += "__**COST:**__ \n"
+            for i in range(len(info)):
+                if i > 3:
+                    string += info[i]
 
             await ctx.send(string)
 
