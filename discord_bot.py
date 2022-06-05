@@ -69,10 +69,10 @@ async def outputResult(ctx, ship, mode):
 
             global data
             try:
-                data = codecs.open(ship, 'r')
+                data = codecs.open(ship.replace(' ', '_'), 'r')
             except FileNotFoundError:
                 os.system(f"wget https://robloxgalaxy.wiki/wiki/{ship.replace(' ', '_')}")
-                data = codecs.open(ship, 'r')
+                data = codecs.open(ship.replace(' ', '_'), 'r')
 
             list = str(data.read()).split("\n")
             info = []
@@ -426,5 +426,12 @@ async def sus(ctx, *, arg):
         await ctx.send(f'Players in this list: {", ".join(string)}. Please be careful when around these players, as \
         they are known for ruining the fun.')
 
+@bot.command(name="update")
+async def update(ctx):
+    if str(ctx.author) == "epicbuilder2007#8204":
+        await ctx.send("Update commenced! See console for details.")
+        os.system("bash update.sh")
+    else:
+        await ctx.send("You do not have permission to do so!")
 
 bot.run(TOKEN)
