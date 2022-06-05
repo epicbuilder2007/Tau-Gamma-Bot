@@ -32,6 +32,10 @@ async def concTurret(ctx, ship):
         if str(Galaxylist[f'Spinal{i + 1}_type'][str(ship)]) != "None":
             string = string + f"Spinal {i + 1}: " + str(Galaxylist[f'Spinal{i + 1}_type'][str(ship)]) + " x" + str(
                 int(Galaxylist[f'Barrels{i + 1}'][str(ship)])) + "\n"
+            string += f"Spinal {i+1} Average DPS: {str(Galaxylist[f'AvS{i+1}DPS'][str(ship)])} \n"
+            string += f"Spinal {i+1} Shield DPS: {str(Galaxylist[f'ShieldS{i+1}DPS'][str(ship)])} \n"
+            string += f"Spinal {i+1} Hull DPS: {str(Galaxylist[f'HullS{i+1}DPS'][str(ship)])} \n"
+            string += f"Spinal {i+1} Reload Time: {str(Galaxylist[f'S{i+1}Reload'][str(ship)])} \n"
 
     for i in range(10):
         if str(Galaxylist[f'Turret{i + 1}_type'][str(ship)]) != "None":
@@ -48,10 +52,18 @@ async def outputResult(ctx, ship, mode):
                 f"{str(ship)} is a {str(Galaxylist['isLimited'][str(ship)])} {str(Galaxylist['Type'][str(ship)])} \n\n" \
                 "__**SHIP DPS STATS:**__ \n" \
                 f"Average DPS:  {str(Galaxylist['AvDPS'][str(ship)])} \n" \
+                f"Ideal DPS: {str(Galaxylist['IdealDPS'][str(ship)])} \n" \
+                f"Alpha DPS: {str(Galaxylist['AlphaDPS'][str(ship)])} \n" \
                 f"Shield DPS: {str(Galaxylist['ShieldDPS'][str(ship)])} \n" \
                 f"Hull DPS: {str(Galaxylist['HullDPS'][str(ship)])} \n" \
+                f"Alpha Shield DPS: {str(Galaxylist['AlphaShield'][str(ship)])} \n" \
+                f"Alpha Hull DPS: {str(Galaxylist['AlphaHull'][str(ship)])} \n" \
                 f"Turret DPS: {str(Galaxylist['TurretDPS'][str(ship)])} \n" \
+                f"Turret Shield DPS: {str(Galaxylist['TurretShield'][str(ship)])} \n" \
+                f"Turret Hull DPS: {str(Galaxylist['TurretHull'][str(ship)])} \n" \
                 f"Spinal DPS: {str(Galaxylist['SpinalDPS'][str(ship)])} \n" \
+                f"Spinal Shield DPS: {str(Galaxylist['SpinalShield'][str(ship)])} \n" \
+                f"Spinal Hull DPS: {str(Galaxylist['SpinalHull'][str(ship)])} \n" \
                 f"Minimum Range: {str(Galaxylist['minRange'][str(ship)])} \n" \
                 f"Maximum Range: {str(Galaxylist['maxRange'][str(ship)])} \n\n"
 
@@ -59,7 +71,7 @@ async def outputResult(ctx, ship, mode):
             try:
                 data = codecs.open(ship, 'r')
             except FileNotFoundError:
-                os.system(f"wget https://robloxgalaxy.wiki/wiki/{ship}")
+                os.system(f"wget https://robloxgalaxy.wiki/wiki/{ship.replace(' ', '_')}")
                 data = codecs.open(ship, 'r')
 
             list = str(data.read()).split("\n")
@@ -111,8 +123,8 @@ async def outputResult(ctx, ship, mode):
                 "Ship: " + str(ship) + "\n"
                 "Minimum Range: " + str(Galaxylist['minRange'][str(ship)]) + "\n"
                 "Maximum Range: " + str(Galaxylist['maxRange'][str(ship)]))
-    except:
-        await ctx.send("Please check if you included mode argument. the command is :ship <ship> <info/turret>")
+    except Exception as e:
+        await ctx.send(str(e))
 
 
 async def newJSON(ctx):
