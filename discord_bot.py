@@ -98,6 +98,7 @@ async def outputResult(ctx, ship, mode):
             string += info[1]
             string += info[2]
             string += info[3]
+            string += "\n"
 
             string += "__**COST:**__ \n"
             for i in range(len(info)):
