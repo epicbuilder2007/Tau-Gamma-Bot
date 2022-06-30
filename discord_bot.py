@@ -32,10 +32,6 @@ async def concTurret(ctx, ship):
         if str(Galaxylist[f'Spinal{i + 1}_type'][str(ship)]) != "None":
             string = string + f"Spinal {i + 1}: " + str(Galaxylist[f'Spinal{i + 1}_type'][str(ship)]) + " x" + str(
                 int(Galaxylist[f'Barrels{i + 1}'][str(ship)])) + "\n"
-            string += f"Spinal {i+1} Average DPS: {str(Galaxylist[f'AvS{i+1}DPS'][str(ship)])} \n"
-            string += f"Spinal {i+1} Shield DPS: {str(Galaxylist[f'ShieldS{i+1}DPS'][str(ship)])} \n"
-            string += f"Spinal {i+1} Hull DPS: {str(Galaxylist[f'HullS{i+1}DPS'][str(ship)])} \n"
-            string += f"Spinal {i+1} Reload Time: {str(Galaxylist[f'S{i+1}Reload'][str(ship)])} \n"
 
     for i in range(10):
         if str(Galaxylist[f'Turret{i + 1}_type'][str(ship)]) != "None":
@@ -48,64 +44,8 @@ async def concTurret(ctx, ship):
 async def outputResult(ctx, ship, mode):
     try:
         if mode == "info":
-            string = \
-                f"{str(ship)} is a {str(Galaxylist['isLimited'][str(ship)])} {str(Galaxylist['Type'][str(ship)])} \n\n" \
-                "__**SHIP DPS STATS:**__ \n" \
-                f"Average DPS:  {str(Galaxylist['AvDPS'][str(ship)])} \n" \
-                f"Ideal DPS: {str(Galaxylist['IdealDPS'][str(ship)])} \n" \
-                f"Alpha DPS: {str(Galaxylist['AlphaDPS'][str(ship)])} \n" \
-                f"Shield DPS: {str(Galaxylist['ShieldDPS'][str(ship)])} \n" \
-                f"Hull DPS: {str(Galaxylist['HullDPS'][str(ship)])} \n" \
-                f"Alpha Shield DPS: {str(Galaxylist['AlphaShield'][str(ship)])} \n" \
-                f"Alpha Hull DPS: {str(Galaxylist['AlphaHull'][str(ship)])} \n" \
-                f"Turret DPS: {str(Galaxylist['TurretDPS'][str(ship)])} \n" \
-                f"Turret Shield DPS: {str(Galaxylist['TurretShield'][str(ship)])} \n" \
-                f"Turret Hull DPS: {str(Galaxylist['TurretHull'][str(ship)])} \n" \
-                f"Spinal DPS: {str(Galaxylist['SpinalDPS'][str(ship)])} \n" \
-                f"Spinal Shield DPS: {str(Galaxylist['SpinalShield'][str(ship)])} \n" \
-                f"Spinal Hull DPS: {str(Galaxylist['SpinalHull'][str(ship)])} \n" \
-                f"Minimum Range: {str(Galaxylist['minRange'][str(ship)])} \n" \
-                f"Maximum Range: {str(Galaxylist['maxRange'][str(ship)])} \n\n"
-
-            global data
-            try:
-                data = codecs.open(ship.replace(' ', '_'), 'r')
-            except FileNotFoundError:
-                os.system(f"wget https://robloxgalaxy.wiki/wiki/{ship.replace(' ', '_')}")
-                data = codecs.open(ship.replace(' ', '_'), 'r')
-
-            list = str(data.read()).split("\n")
-            info = []
-            for i in range(len(list)):
-                if list[i].find('<td class="pi-horizontal-group-item pi-data-value pi-font pi-border-color pi-item-spacing" data-source=') >= 0:
-                    info.append(list[i])
-
-            for i in range(len(info)):
-                info[i] = info[i].replace(
-                    '<td class="pi-horizontal-group-item pi-data-value pi-font pi-border-color pi-item-spacing" data-source=',
-                    '')
-                info[i] = info[i].replace('<p>', '')
-                info[i] = info[i].replace('</p>', '\n')
-                info[i] = info[i].replace('</td>', '')
-                info[i] = info[i].replace('>', ': ')
-                info[i] = info[i].replace('"', '')
-                info[i] = info[i].replace('credit', 'manufacturing fee')
-                info[i] = info[i].replace('_', ' ')
-                info[i] = info[i].title()
-
-            string += "__**SHIP STATS:**__ \n"
-            string += info[0]
-            string += info[1]
-            string += info[2]
-            string += info[3]
-            string += "\n"
-
-            string += "__**COST:**__ \n"
-            for i in range(len(info)):
-                if i > 3:
-                    string += info[i]
-
-            await ctx.send(string)
+            info = \
+                f"{str(ship)} is a {str(Galaxylist['isLimited'][str(ship)])} {str(Galaxylist['Type'][str(ship)])} \n\n"
 
 
         elif mode == "turret":
