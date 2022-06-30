@@ -118,7 +118,7 @@ async def shipCommand(ctx, arg, mode):
 
 
 load_dotenv()
-TOKEN = open('TOKEN.txt', 'r')
+TOKEN = open('TOKEN.txt', 'r').read()
 bot = commands.Bot(command_prefix="!")
 
 
