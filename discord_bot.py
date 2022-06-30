@@ -8,7 +8,7 @@ from discord.ext import commands
 import json
 from numpy import ndarray
 
-Version = 1.8
+Version = 1.9
 
 Galaxylist = pandas.read_excel('Galaxydps.xlsx', index_col=0)
 
@@ -118,53 +118,8 @@ async def shipCommand(ctx, arg, mode):
 
 
 load_dotenv()
-TOKEN = ""
+TOKEN = open('TOKEN.txt', 'r')
 bot = commands.Bot(command_prefix="!")
-
-
-@bot.command(name='short')
-async def func(ctx, short="", *, arg):
-    args = arg.split()
-    mode = "set"
-    if "set" in args or "remove" in args or "print" in args:
-        if "set" in args:
-            mode = "set"
-        elif "remove" in args:
-            mode = "remove"
-        elif "print" in args:
-            mode = "print"
-    args.remove(mode)
-    global JSON
-    try:
-        JSON = open(f'{ctx.author.id}.json', "r")
-    except FileNotFoundError:
-        await newJSON(ctx)
-        JSON = open(f'{ctx.author.id}.json', 'r')
-    pref = json.load(JSON)
-    JSON.close()
-    if mode == "set":
-        JSON = open(f'{ctx.author.id}.json', 'w')
-        pref['set_auto_referral'][str(short)] = str(args[0])
-        pref = json.dumps(pref, indent=4)
-        JSON.write(pref)
-        JSON.close()
-    elif mode == "remove":
-        try:
-            JSON = open(f'{ctx.author.id}.json', 'w')
-            try:
-                del pref['set_auto_referral'][str(short)]
-                pref = json.dumps(pref, indent=4)
-                JSON.write(pref)
-                JSON.close()
-            except KeyError:
-                await ctx.send(f"Short {short} is not found, did you make a typo?")
-        except FileNotFoundError:
-            await ctx.send("You don't have a json file, please use the bot before using this.")
-    elif mode == "print":
-        try:
-            await ctx.send(f'{short} was set to ship {pref["set_auto_referral"][str(short)]}.')
-        except KeyError:
-            await ctx.send(f'Short {short} not found, did you make a typo?')
 
 
 @bot.command(name="hitlist")
@@ -241,38 +196,6 @@ async def turret(ctx, *, arg):
     await shipCommand(ctx, arg, "turret")
 
 
-@bot.command(name="Help")
-async def help(ctx):
-    await ctx.send(
-        f"This is version {Version} of Tau Gamma Bot, home brewed by epicbuilder2007, who definitely doesn't have other stuff to do. \n\n" +
-        "There are currently  commands for this bot: \n\n" +
-        "command !info <string> \n" +
-        "This returns general info of the ship. \n\n" +
-        "command !turret <string> \n" +
-        "This returns turret info (dps and name) of the ship. \n\n" +
-        "command !range <string> \n" +
-        "This returns range info of the ship \n\n" +
-        "command !short <short> <ship (optional)> <set/remove/print> \n" +
-        "Use this command to set shortcuts to ships.\n" +
-        "'set' sets the short name you provided to the ship name you provided. Remember that currently, you do need to make sure the ship name is case-correct. \n" +
-        "'remove' removes the short name you provided. \n" +
-        "'print' prints the short name you set before \n\n" +
-        "command !hitlist <player> <reason (optional)> <add/view/viewall> \n" +
-        "Use this command to keep tabs on which players the clan wants to kill. \n" +
-        "'add' adds the player to the list. \n" +
-        "'view' views the reason why the player was added to the hitlist. \n" +
-        "'viewall' views all the players and their reason for their presence in the hitlist \n\n" +
-        "command !suslist <player> <add/view> \n" +
-        "Use this command to keep track of suspicious players to avoid." +
-        "'add' adds the player name provided to the list. \n" +
-        "'view' returns the list of players to be careful around. \n\n" +
-        "command !services <service> <True/False> \n" +
-        "Use this command to enable or disable bot features for yourself. \n" +
-        "Current configurable services include (case-sensitive): 'predictive_search' \n\n" +
-        "If you have any feature requests, or bug reports, feel free to contact me (epicbuilder2007#8204) about it, whether via pinging me in General Chat or by DMing me, or even via Whatsapp if you have it." +
-        "Don't waste your time trying to tell me how shit this bot is though, I know that :sad:")
-
-
 @bot.command(name='services')
 async def services(ctx, service, status=True):
     global JSON
@@ -297,31 +220,6 @@ async def services(ctx, service, status=True):
 
     else:
         await ctx.send(f"Nothing changed, {service} does not exist")
-
-
-@bot.command(name="data")
-async def data(ctx, ship="", cat="", string=""):
-    if ship != "" and cat != "" and string != "":
-        JSON = open("data.json", "r")
-        queue = json.load(JSON)
-        JSON.close()
-        message = await ctx.send(
-            f"Successfully proposed change: \n\n ship: {str(ship)} \n Data Category: {str(cat)} \n Value: {str(string)} \n\n Now the council shall decide your fate.")
-        await message.add_reaction("⬆")
-        await message.add_reaction("⬇")
-        JSON = open("data.json", "w")
-        queue[str(message.id)] = (message.channel.id, ship, cat, string)
-        queue = json.dumps(queue, indent=4)
-        JSON.write(queue)
-        JSON.close()
-
-    else:
-        if ship == "":
-            await ctx.send("Please specify ship")
-        if cat == "":
-            await ctx.send("Please specify data category")
-        if string == "":
-            await ctx.send("Please specify data value")
 
 
 @bot.command(name="suslist")
